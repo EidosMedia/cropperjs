@@ -198,6 +198,6 @@ declare class Cropper {
   static setDefaults(options: Cropper.Options<EventTarget>): void;
 }
 
-declare module 'cropperjs' {
+declare module '@eidosmedia/cropperjs' {
   export default Cropper;
 }

@@ -44,14 +44,25 @@ export default {
     addClass(cropper, CLASS_HIDDEN);
     removeClass(element, CLASS_HIDDEN);
 
+    // const containerData = {
+    //   width: Math.max(
+    //     container.offsetWidth,
+    //     minWidth >= 0 ? minWidth : MIN_CONTAINER_WIDTH,
+    //   ),
+    //   height: Math.max(
+    //     container.offsetHeight,
+    //     minHeight >= 0 ? minHeight : MIN_CONTAINER_HEIGHT,
+    //   ),
+    // };
+
     const containerData = {
       width: Math.max(
-        container.offsetWidth,
-        minWidth >= 0 ? minWidth : MIN_CONTAINER_WIDTH,
+        parseFloat(container.style.width) || container.offsetWidth,
+        Number(options.minContainerWidth) || 200,
       ),
       height: Math.max(
-        container.offsetHeight,
-        minHeight >= 0 ? minHeight : MIN_CONTAINER_HEIGHT,
+        parseFloat(container.style.height) || container.offsetHeight,
+        Number(options.minContainerHeight) || 100,
       ),
     };
 
@@ -211,10 +222,10 @@ export default {
           }
         }
       } else {
-        canvasData.minLeft = -canvasData.width;
-        canvasData.minTop = -canvasData.height;
-        canvasData.maxLeft = containerData.width;
-        canvasData.maxTop = containerData.height;
+        canvasData.minLeft = -Infinity; //-canvasData.width;
+        canvasData.minTop = -Infinity; //-canvasData.height;
+        canvasData.maxLeft = Infinity; //containerData.width;
+        canvasData.maxTop = Infinity; //containerData.height;
       }
     }
   },

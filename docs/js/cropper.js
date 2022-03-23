@@ -5,7 +5,7 @@
  * Copyright 2015-present Chen Fengyuan
  * Released under the MIT license
  *
- * Date: 2021-06-12T08:00:17.411Z
+ * Date: 2022-03-23T08:14:20.107Z
  */
 
 (function (global, factory) {
@@ -274,6 +274,24 @@
 
   var TEMPLATE = '<div class="cropper-container" touch-action="none">' + '<div class="cropper-wrap-box">' + '<div class="cropper-canvas"></div>' + '</div>' + '<div class="cropper-drag-box"></div>' + '<div class="cropper-crop-box">' + '<span class="cropper-view-box"></span>' + '<span class="cropper-dashed dashed-h"></span>' + '<span class="cropper-dashed dashed-v"></span>' + '<span class="cropper-center"></span>' + '<span class="cropper-face"></span>' + '<span class="cropper-line line-e" data-cropper-action="e"></span>' + '<span class="cropper-line line-n" data-cropper-action="n"></span>' + '<span class="cropper-line line-w" data-cropper-action="w"></span>' + '<span class="cropper-line line-s" data-cropper-action="s"></span>' + '<span class="cropper-point point-e" data-cropper-action="e"></span>' + '<span class="cropper-point point-n" data-cropper-action="n"></span>' + '<span class="cropper-point point-w" data-cropper-action="w"></span>' + '<span class="cropper-point point-s" data-cropper-action="s"></span>' + '<span class="cropper-point point-ne" data-cropper-action="ne"></span>' + '<span class="cropper-point point-nw" data-cropper-action="nw"></span>' + '<span class="cropper-point point-sw" data-cropper-action="sw"></span>' + '<span class="cropper-point point-se" data-cropper-action="se"></span>' + '</div>' + '</div>';
 
+  var getDocument = function getDocument() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    if (options.$document && options.$document[0]) {
+      return options.$document[0];
+    }
+
+    return document;
+  };
+  var getWindow = function getWindow() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    if (options.$window && options.$window[0]) {
+      return options.$window[0];
+    }
+
+    return window;
+  };
   /**
    * Check if the given value is not a number.
    */
@@ -718,7 +736,7 @@
         cancelable: true
       });
     } else {
-      event = document.createEvent('CustomEvent');
+      event = getDocument(this.options).createEvent('CustomEvent');
       event.initCustomEvent(type, true, true, data);
     }
 
@@ -732,9 +750,14 @@
 
   function getOffset(element) {
     var box = element.getBoundingClientRect();
+
+    var _window = getWindow(this.options);
+
+    var _document = getDocument(this.options);
+
     return {
-      left: box.left + (window.pageXOffset - document.documentElement.clientLeft),
-      top: box.top + (window.pageYOffset - document.documentElement.clientTop)
+      left: box.left + (_window.pageXOffset - _document.documentElement.clientLeft),
+      top: box.top + (_window.pageYOffset - _document.documentElement.clientTop)
     };
   }
   var location = WINDOW.location;
@@ -975,7 +998,7 @@
         minWidth = _ref8$minWidth === void 0 ? 0 : _ref8$minWidth,
         _ref8$minHeight = _ref8.minHeight,
         minHeight = _ref8$minHeight === void 0 ? 0 : _ref8$minHeight;
-    var canvas = document.createElement('canvas');
+    var canvas = getDocument(this.options).createElement('canvas');
     var context = canvas.getContext('2d');
     var maxSizes = getAdjustedSizes({
       aspectRatio: aspectRatio,
@@ -1231,13 +1254,23 @@
           options = this.options,
           container = this.container,
           cropper = this.cropper;
-      var minWidth = Number(options.minContainerWidth);
-      var minHeight = Number(options.minContainerHeight);
+      Number(options.minContainerWidth);
+      Number(options.minContainerHeight);
       addClass(cropper, CLASS_HIDDEN);
-      removeClass(element, CLASS_HIDDEN);
+      removeClass(element, CLASS_HIDDEN); // const containerData = {
+      //   width: Math.max(
+      //     container.offsetWidth,
+      //     minWidth >= 0 ? minWidth : MIN_CONTAINER_WIDTH,
+      //   ),
+      //   height: Math.max(
+      //     container.offsetHeight,
+      //     minHeight >= 0 ? minHeight : MIN_CONTAINER_HEIGHT,
+      //   ),
+      // };
+
       var containerData = {
-        width: Math.max(container.offsetWidth, minWidth >= 0 ? minWidth : MIN_CONTAINER_WIDTH),
-        height: Math.max(container.offsetHeight, minHeight >= 0 ? minHeight : MIN_CONTAINER_HEIGHT)
+        width: Math.max(parseFloat(container.style.width) || container.offsetWidth, Number(options.minContainerWidth) || 200),
+        height: Math.max(parseFloat(container.style.height) || container.offsetHeight, Number(options.minContainerHeight) || 100)
       };
       this.containerData = containerData;
       setStyle(cropper, {
@@ -1372,10 +1405,13 @@
             }
           }
         } else {
-          canvasData.minLeft = -canvasData.width;
-          canvasData.minTop = -canvasData.height;
-          canvasData.maxLeft = containerData.width;
-          canvasData.maxTop = containerData.height;
+          canvasData.minLeft = -Infinity; //-canvasData.width;
+
+          canvasData.minTop = -Infinity; //-canvasData.height;
+
+          canvasData.maxLeft = Infinity; //containerData.width;
+
+          canvasData.maxTop = Infinity; //containerData.height;
         }
       }
     },
@@ -1595,12 +1631,14 @@
 
   var preview = {
     initPreview: function initPreview() {
+      var _this = this;
+
       var element = this.element,
           crossOrigin = this.crossOrigin;
       var preview = this.options.preview;
       var url = crossOrigin ? this.crossOriginUrl : this.url;
       var alt = element.alt || 'The image to preview';
-      var image = document.createElement('img');
+      var image = getDocument(this.options).createElement('img');
 
       if (crossOrigin) {
         image.crossOrigin = crossOrigin;
@@ -1625,7 +1663,7 @@
 
       this.previews = previews;
       forEach(previews, function (el) {
-        var img = document.createElement('img'); // Save the original size for recover
+        var img = getDocument(_this.options).createElement('img'); // Save the original size for recover
 
         setData(el, DATA_PREVIEW, {
           width: el.offsetWidth,
@@ -3081,7 +3119,7 @@
 
       width = Math.min(maxSizes.width, Math.max(minSizes.width, width));
       height = Math.min(maxSizes.height, Math.max(minSizes.height, height));
-      var canvas = document.createElement('canvas');
+      var canvas = getDocument(this.options).createElement('canvas');
       var context = canvas.getContext('2d');
       canvas.width = normalizeDecimalNumber(width);
       canvas.height = normalizeDecimalNumber(height);
@@ -3405,7 +3443,7 @@
 
         this.crossOrigin = crossOrigin;
         this.crossOriginUrl = crossOriginUrl;
-        var image = document.createElement('img');
+        var image = getDocument(this.options).createElement('img');
 
         if (crossOrigin) {
           image.crossOrigin = crossOrigin;
@@ -3451,8 +3489,8 @@
           return;
         }
 
-        var sizingImage = document.createElement('img');
-        var body = document.body || document.documentElement;
+        var sizingImage = getDocument(this.options).createElement('img');
+        var body = getDocument(this.options).body || getDocument(this.options).documentElement;
         this.sizingImage = sizingImage;
 
         sizingImage.onload = function () {
@@ -3492,7 +3530,7 @@
             image = this.image; // Create cropper elements
 
         var container = element.parentNode;
-        var template = document.createElement('div');
+        var template = getDocument(this.options).createElement('div');
         template.innerHTML = TEMPLATE;
         var cropper = template.querySelector(".".concat(NAMESPACE, "-container"));
         var canvas = cropper.querySelector(".".concat(NAMESPACE, "-canvas"));

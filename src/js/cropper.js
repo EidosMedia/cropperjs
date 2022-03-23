@@ -29,6 +29,7 @@ import {
   assign,
   dataURLToArrayBuffer,
   dispatchEvent,
+  getDocument,
   isCrossOriginURL,
   isFunction,
   isPlainObject,
@@ -219,7 +220,7 @@ class Cropper {
     this.crossOrigin = crossOrigin;
     this.crossOriginUrl = crossOriginUrl;
 
-    const image = document.createElement('img');
+    const image = getDocument(this.options).createElement('img');
 
     if (crossOrigin) {
       image.crossOrigin = crossOrigin;
@@ -262,8 +263,8 @@ class Cropper {
       return;
     }
 
-    const sizingImage = document.createElement('img');
-    const body = document.body || document.documentElement;
+    const sizingImage = getDocument(this.options).createElement('img');
+    const body = getDocument(this.options).body || getDocument(this.options).documentElement;
 
     this.sizingImage = sizingImage;
 
@@ -313,7 +314,7 @@ class Cropper {
 
     // Create cropper elements
     const container = element.parentNode;
-    const template = document.createElement('div');
+    const template = getDocument(this.options).createElement('div');
 
     template.innerHTML = TEMPLATE;
 

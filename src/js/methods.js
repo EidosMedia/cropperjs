@@ -27,6 +27,7 @@ import {
   removeClass,
   setData,
   toggleClass,
+  getDocument,
 } from './utilities';
 
 export default {
@@ -687,7 +688,7 @@ export default {
     width = Math.min(maxSizes.width, Math.max(minSizes.width, width));
     height = Math.min(maxSizes.height, Math.max(minSizes.height, height));
 
-    const canvas = document.createElement('canvas');
+    const canvas = getDocument(this.options).createElement('canvas');
     const context = canvas.getContext('2d');
 
     canvas.width = normalizeDecimalNumber(width);

@@ -7,6 +7,7 @@ import {
   removeData,
   setData,
   setStyle,
+  getDocument,
 } from './utilities';
 
 export default {
@@ -15,7 +16,7 @@ export default {
     const { preview } = this.options;
     const url = crossOrigin ? this.crossOriginUrl : this.url;
     const alt = element.alt || 'The image to preview';
-    const image = document.createElement('img');
+    const image = getDocument(this.options).createElement('img');
 
     if (crossOrigin) {
       image.crossOrigin = crossOrigin;
@@ -41,7 +42,7 @@ export default {
     this.previews = previews;
 
     forEach(previews, (el) => {
-      const img = document.createElement('img');
+      const img = getDocument(this.options).createElement('img');
 
       // Save the original size for recover
       setData(el, DATA_PREVIEW, {

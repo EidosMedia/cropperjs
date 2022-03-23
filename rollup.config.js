@@ -3,7 +3,7 @@ const changeCase = require('change-case');
 const createBanner = require('create-banner');
 const pkg = require('./package.json');
 
-pkg.name = pkg.name.replace('js', '');
+pkg.name = pkg.name.replace('js', '').replace('@eidosmedia/', '');
 
 const name = changeCase.pascalCase(pkg.name);
 const banner = createBanner({

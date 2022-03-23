@@ -1,4 +1,19 @@
+/* eslint-disable no-underscore-dangle */
 import { IS_BROWSER, WINDOW } from './constants';
+
+export const getDocument = (options = {}) => {
+  if (options.$document && options.$document[0]) {
+    return options.$document[0];
+  }
+  return document;
+};
+
+export const getWindow = (options = {}) => {
+  if (options.$window && options.$window[0]) {
+    return options.$window[0];
+  }
+  return window;
+};
 
 /**
  * Check if the given value is not a number.
@@ -436,7 +451,7 @@ export function dispatchEvent(element, type, data) {
       cancelable: true,
     });
   } else {
-    event = document.createEvent('CustomEvent');
+    event = getDocument(this.options).createEvent('CustomEvent');
     event.initCustomEvent(type, true, true, data);
   }
 
@@ -450,10 +465,12 @@ export function dispatchEvent(element, type, data) {
  */
 export function getOffset(element) {
   const box = element.getBoundingClientRect();
+  const _window = getWindow(this.options);
+  const _document = getDocument(this.options);
 
   return {
-    left: box.left + (window.pageXOffset - document.documentElement.clientLeft),
-    top: box.top + (window.pageYOffset - document.documentElement.clientTop),
+    left: box.left + (_window.pageXOffset - _document.documentElement.clientLeft),
+    top: box.top + (_window.pageYOffset - _document.documentElement.clientTop),
   };
 }
 
@@ -704,7 +721,7 @@ export function getSourceCanvas(
     minHeight = 0,
   },
 ) {
-  const canvas = document.createElement('canvas');
+  const canvas = getDocument(this.options).createElement('canvas');
   const context = canvas.getContext('2d');
   const maxSizes = getAdjustedSizes({
     aspectRatio,

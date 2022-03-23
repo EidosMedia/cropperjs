@@ -5,7 +5,7 @@
  * Copyright 2015-present Chen Fengyuan
  * Released under the MIT license
  *
- * Date: 2022-03-23T08:14:20.107Z
+ * Date: 2022-03-23T14:51:38.231Z
  */
 
 'use strict';
@@ -741,15 +741,16 @@ function dispatchEvent(element, type, data) {
 /**
  * Get the offset base on the document.
  * @param {Element} element - The target element.
+ * @param {Object} options - The options
  * @returns {Object} The offset data.
  */
 
-function getOffset(element) {
+function getOffset(element, options) {
   var box = element.getBoundingClientRect();
 
-  var _window = getWindow(this.options);
+  var _window = getWindow(options);
 
-  var _document = getDocument(this.options);
+  var _document = getDocument(options);
 
   return {
     left: box.left + (_window.pageXOffset - _document.documentElement.clientLeft),
@@ -2439,7 +2440,7 @@ var change = {
           break;
         }
 
-        offset = getOffset(this.cropper);
+        offset = getOffset(this.cropper, this.options);
         left = pointer.startX - offset.left;
         top = pointer.startY - offset.top;
         width = cropBoxData.minWidth;
@@ -2711,7 +2712,7 @@ var methods = {
 
       if (_originalEvent) {
         var pointers = this.pointers;
-        var offset = getOffset(this.cropper);
+        var offset = getOffset(this.cropper, this.options);
         var center = pointers && Object.keys(pointers).length ? getPointersCenter(pointers) : {
           pageX: _originalEvent.pageX,
           pageY: _originalEvent.pageY

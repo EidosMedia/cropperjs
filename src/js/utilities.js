@@ -461,12 +461,13 @@ export function dispatchEvent(element, type, data) {
 /**
  * Get the offset base on the document.
  * @param {Element} element - The target element.
+ * @param {Object} options - The options
  * @returns {Object} The offset data.
  */
-export function getOffset(element) {
+export function getOffset(element, options) {
   const box = element.getBoundingClientRect();
-  const _window = getWindow(this.options);
-  const _document = getDocument(this.options);
+  const _window = getWindow(options);
+  const _document = getDocument(options);
 
   return {
     left: box.left + (_window.pageXOffset - _document.documentElement.clientLeft),

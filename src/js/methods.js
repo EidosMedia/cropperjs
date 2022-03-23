@@ -264,7 +264,7 @@ export default {
 
       if (_originalEvent) {
         const { pointers } = this;
-        const offset = getOffset(this.cropper);
+        const offset = getOffset(this.cropper, this.options);
         const center = pointers && Object.keys(pointers).length ? getPointersCenter(pointers) : {
           pageX: _originalEvent.pageX,
           pageY: _originalEvent.pageY,

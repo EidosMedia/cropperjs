@@ -441,7 +441,7 @@ export default {
           break;
         }
 
-        offset = getOffset(this.cropper);
+        offset = getOffset(this.cropper, this.options);
         left = pointer.startX - offset.left;
         top = pointer.startY - offset.top;
         width = cropBoxData.minWidth;
